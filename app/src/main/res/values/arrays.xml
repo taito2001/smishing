@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Reply Preference -->
+    <!-- Reply Preference Entries -->
     <string-array name="reply_entries">
         <item>Reply</item>
-        <item>Reply to all</item>
+        <item>Reply to All</item>
     </string-array>
 
+    <!-- Reply Preference Values -->
     <string-array name="reply_values">
         <item>reply</item>
         <item>reply_all</item>

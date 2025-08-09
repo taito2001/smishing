@@ -1,26 +1,45 @@
 package com.example.smishingdetectionapp.chat;
+
 /**
- * Represents a chat message in the conversation between user and bot
+ * Represents a chat message in the conversation between user and bot.
  */
 public class ChatMessage {
-   // Constants to identify message sender type
-    public static final int USER_MESSAGE = 0;
-    public static final int BOT_MESSAGE = 1;
 
-   // The content of the message
+    // Constants to identify message sender type
+    public static final int USER = 0;
+    public static final int BOT = 1;
+
+    // The content of the message
     private String message;
-    // Type of message (USER_MESSAGE or BOT_MESSAGE)
+
+    // Type of message (USER or BOT)
     private int messageType;
 
+    /**
+     * Constructs a ChatMessage with specified content and sender type.
+     *
+     * @param message The message content.
+     * @param messageType The sender type (USER or BOT).
+     */
     public ChatMessage(String message, int messageType) {
         this.message = message;
         this.messageType = messageType;
     }
-// return The content of the message
+
+    /**
+     * Gets the message content.
+     *
+     * @return The message text.
+     */
     public String getMessage() {
         return message;
     }
-// return The type of message (USER_MESSAGE or BOT_MESSAGE)
+
+    /**
+     * Gets the message type.
+     *
+     * @return 0 if sent by USER, 1 if sent by BOT.
+     */
     public int getMessageType() {
         return messageType;
     }

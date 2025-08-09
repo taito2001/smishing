@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingStart="12dp"
+    android:paddingEnd="12dp"
+    android:paddingTop="6dp"
+    android:paddingBottom="6dp"
+    android:gravity="start"
+    android:baselineAligned="false">
+
+    <!-- Bot Profile Icon -->
+    <ImageView
+        android:id="@+id/botProfileIcon"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:src="@drawable/ic_bot_profile"
+        android:contentDescription="@string/bot_profile_icon"
+        android:layout_gravity="top"
+        android:layout_marginEnd="8dp"
+        app:tint="@color/smish_bot_icon" />
+
+    <!-- Bot Message Bubble -->
+    <TextView
+        android:id="@+id/botMessageText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Hello! I’m here to help."
+        android:textColor="#000000"
+        android:background="@drawable/bubble_bot"
+        android:padding="10dp"
+        android:textSize="14sp"
+        android:lineSpacingExtra="4dp" />
+</LinearLayout>
