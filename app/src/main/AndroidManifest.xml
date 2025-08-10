@@ -44,6 +44,9 @@
             android:name=".HelpActivity"
             android:exported="false" />
         <activity
+            android:name="com.example.smishingdetectionapp.ui.FaqActivity"
+            android:exported="false" />
+        <activity
             android:name=".AboutMeActivity"
             android:exported="false" />
         <activity

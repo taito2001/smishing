@@ -15,6 +15,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import com.example.smishingdetectionapp.ui.FaqActivity;
+
 
 public class HelpActivity extends SharedActivity {
 
@@ -65,10 +67,11 @@ public class HelpActivity extends SharedActivity {
         rv3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Handle the click event here
-                Toast.makeText(HelpActivity.this, "Faq", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(HelpActivity.this, FaqActivity.class);
+                startActivity(intent);
             }
         });
+
 
         //Feedback
         RelativeLayout rv4 = findViewById(R.id.rv_4);
