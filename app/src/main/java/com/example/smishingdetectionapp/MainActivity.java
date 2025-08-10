@@ -1,10 +1,14 @@
 package com.example.smishingdetectionapp;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.Menu;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,14 +27,13 @@ import com.example.smishingdetectionapp.RadarActivity;
 import com.example.smishingdetectionapp.riskmeter.RiskScannerTCActivity;
 import com.example.smishingdetectionapp.notifications.NotificationPermissionDialogFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-
 import com.getkeepsafe.taptargetview.TapTarget;
 import com.getkeepsafe.taptargetview.TapTargetSequence;
-import com.getkeepsafe.taptargetview.TapTargetView;
 
 public class MainActivity extends SharedActivity {
     private AppBarConfiguration mAppBarConfiguration;
     private boolean isBackPressed = false;
+    private TextView offlineBanner;
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -46,6 +49,12 @@ public class MainActivity extends SharedActivity {
         if (!areNotificationsEnabled()) {
             showNotificationPermissionDialog();
         }
+
+        // Initialize Offline Banner
+        offlineBanner = findViewById(R.id.offline_Banner);
+
+        // --- OFFLINE MODE FEATURE ---
+        checkOfflineMode();
 
         BottomNavigationView nav = findViewById(R.id.bottom_navigation);
         nav.setSelectedItemId(R.id.nav_home);
@@ -79,7 +88,6 @@ public class MainActivity extends SharedActivity {
             startActivity(new Intent(this, DetectionsActivity.class));
             finish();
         });
-
 
         Button learnMoreButton = findViewById(R.id.fragment_container);
         learnMoreButton.setOnClickListener(v -> {
@@ -116,85 +124,108 @@ public class MainActivity extends SharedActivity {
         if (showGuideNow) {
             findViewById(R.id.debug_btn).post(() -> {
                 new TapTargetSequence(MainActivity.this)
-                    .targets(
-                    TapTarget.forView(findViewById(R.id.new_detections_container), "New Detections", "This shows any newly detected smishing attempts on your device.")
-                        .outerCircleColor(R.color.navy_blue)
-                        .targetCircleColor(android.R.color.white)
-                        .targetRadius(40)
-                        .titleTextSize(22)
-                        .descriptionTextSize(18)
-                        .drawShadow(true)
-                        .cancelable(false)
-                        .transparentTarget(true),
-        
-                    TapTarget.forView(findViewById(R.id.total_detections_container), "Total Detections", "This shows the total number of smishing attempts detected on your device.")
-                        .outerCircleColor(R.color.navy_blue)
-                        .targetCircleColor(android.R.color.white)
-                        .targetRadius(40)
-                        .titleTextSize(22)
-                        .descriptionTextSize(18)
-                        .drawShadow(true)
-                        .cancelable(false)
-                        .transparentTarget(true),
+                        .targets(
+                                TapTarget.forView(findViewById(R.id.new_detections_container), "New Detections", "This shows any newly detected smishing attempts on your device.")
+                                        .outerCircleColor(R.color.navy_blue)
+                                        .targetCircleColor(android.R.color.white)
+                                        .targetRadius(40)
+                                        .titleTextSize(22)
+                                        .descriptionTextSize(18)
+                                        .drawShadow(true)
+                                        .cancelable(false)
+                                        .transparentTarget(true),
 
-                    TapTarget.forView(findViewById(R.id.detections_btn), "View Detections", "Tap here to view detailed records of detected smishing attempts made on your device.")
-                        .outerCircleColor(R.color.navy_blue)
-                        .targetCircleColor(android.R.color.white)
-                        .targetRadius(31)
-                        .titleTextSize(22)
-                        .descriptionTextSize(18)
-                        .drawShadow(true)
-                        .cancelable(false)
-                        .transparentTarget(true),
-        
-                    TapTarget.forView(findViewById(R.id.scanner_btn), "Risk Scanner", "Tap here to scan your device and assess how vulnerable it may be to smishing attacks.")
-                        .outerCircleColor(R.color.navy_blue)
-                        .targetCircleColor(android.R.color.white)
-                        .targetRadius(31)
-                        .titleTextSize(22)
-                        .descriptionTextSize(18)
-                        .drawShadow(true)
-                        .cancelable(false)
-                        .transparentTarget(true),
-        
-                    TapTarget.forView(findViewById(R.id.fragment_container), "Learn More", "Tap here to explore tips and tutorials to understand smishing and stay safe.")
-                        .outerCircleColor(R.color.navy_blue)
-                        .targetCircleColor(android.R.color.white)
-                        .targetRadius(23)
-                        .titleTextSize(22)
-                        .descriptionTextSize(18)
-                        .drawShadow(true)
-                        .cancelable(false)
-                        .transparentTarget(true),
-        
-                    TapTarget.forView(findViewById(R.id.bottom_navigation), "Navigation Bar", "This is the navigation bar. Use it to switch between the Home screen, the Report page to report potential smishing attempts, the News section for the latest smishing updates, and the Settings page.")
-                        .outerCircleColor(R.color.navy_blue)
-                        .targetCircleColor(android.R.color.white)
-                        .targetRadius(30)
-                        .titleTextSize(22)
-                        .descriptionTextSize(18)
-                        .drawShadow(true)
-                        .cancelable(false)
-                        .transparentTarget(true)
+                                TapTarget.forView(findViewById(R.id.total_detections_container), "Total Detections", "This shows the total number of smishing attempts detected on your device.")
+                                        .outerCircleColor(R.color.navy_blue)
+                                        .targetCircleColor(android.R.color.white)
+                                        .targetRadius(40)
+                                        .titleTextSize(22)
+                                        .descriptionTextSize(18)
+                                        .drawShadow(true)
+                                        .cancelable(false)
+                                        .transparentTarget(true),
 
-                    )
-                .listener(new TapTargetSequence.Listener() {
-                    @Override
-                    public void onSequenceFinish() {
-                        Toast.makeText(MainActivity.this, "You're all set to smish!", Toast.LENGTH_SHORT).show();
-                    }
+                                TapTarget.forView(findViewById(R.id.detections_btn), "View Detections", "Tap here to view detailed records of detected smishing attempts made on your device.")
+                                        .outerCircleColor(R.color.navy_blue)
+                                        .targetCircleColor(android.R.color.white)
+                                        .targetRadius(31)
+                                        .titleTextSize(22)
+                                        .descriptionTextSize(18)
+                                        .drawShadow(true)
+                                        .cancelable(false)
+                                        .transparentTarget(true),
 
-                    @Override
-                    public void onSequenceStep(TapTarget lastTarget, boolean targetClicked) {}
+                                TapTarget.forView(findViewById(R.id.scanner_btn), "Risk Scanner", "Tap here to scan your device and assess how vulnerable it may be to smishing attacks.")
+                                        .outerCircleColor(R.color.navy_blue)
+                                        .targetCircleColor(android.R.color.white)
+                                        .targetRadius(31)
+                                        .titleTextSize(22)
+                                        .descriptionTextSize(18)
+                                        .drawShadow(true)
+                                        .cancelable(false)
+                                        .transparentTarget(true),
 
-                    @Override
-                    public void onSequenceCanceled(TapTarget lastTarget) {
-                        Toast.makeText(MainActivity.this, "Guide cancelled", Toast.LENGTH_SHORT).show();
-                    }
-                })
-                .start();
+                                TapTarget.forView(findViewById(R.id.fragment_container), "Learn More", "Tap here to explore tips and tutorials to understand smishing and stay safe.")
+                                        .outerCircleColor(R.color.navy_blue)
+                                        .targetCircleColor(android.R.color.white)
+                                        .targetRadius(23)
+                                        .titleTextSize(22)
+                                        .descriptionTextSize(18)
+                                        .drawShadow(true)
+                                        .cancelable(false)
+                                        .transparentTarget(true),
+
+                                TapTarget.forView(findViewById(R.id.bottom_navigation), "Navigation Bar", "This is the navigation bar. Use it to switch between the Home screen, the Report page to report potential smishing attempts, the News section for the latest smishing updates, and the Settings page.")
+                                        .outerCircleColor(R.color.navy_blue)
+                                        .targetCircleColor(android.R.color.white)
+                                        .targetRadius(30)
+                                        .titleTextSize(22)
+                                        .descriptionTextSize(18)
+                                        .drawShadow(true)
+                                        .cancelable(false)
+                                        .transparentTarget(true)
+                        )
+                        .listener(new TapTargetSequence.Listener() {
+                            @Override
+                            public void onSequenceFinish() {
+                                Toast.makeText(MainActivity.this, "You're all set to smish!", Toast.LENGTH_SHORT).show();
+                            }
+
+                            @Override
+                            public void onSequenceStep(TapTarget lastTarget, boolean targetClicked) {}
+
+                            @Override
+                            public void onSequenceCanceled(TapTarget lastTarget) {
+                                Toast.makeText(MainActivity.this, "Guide cancelled", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .start();
             });
         }
+    }
+
+    /**
+     * Check if device is offline and display the Offline Banner dynamically.
+     */
+    private void checkOfflineMode() {
+        if (!isOnline()) {
+            if (offlineBanner != null) {
+                offlineBanner.setVisibility(View.VISIBLE);
+                offlineBanner.setText("⚠ You are currently offline. Some features may be limited.");
+            }
+            Toast.makeText(this, "Offline Mode Enabled", Toast.LENGTH_SHORT).show();
+        } else {
+            if (offlineBanner != null) offlineBanner.setVisibility(View.GONE);
+        }
+    }
+
+    private boolean isOnline() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (cm != null) {
+            NetworkInfo netInfo = cm.getActiveNetworkInfo();
+            return netInfo != null && netInfo.isConnected();
+        }
+        return false;
     }
 
     // Press back twice to exit
@@ -204,10 +235,8 @@ public class MainActivity extends SharedActivity {
             super.onBackPressed();
             return;
         }
-
         Toast.makeText(this, "press back again to exit", Toast.LENGTH_SHORT).show();
         isBackPressed = true;
-
         new Handler().postDelayed(() -> isBackPressed = false, 2000);
     }
 

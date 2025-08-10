@@ -120,6 +120,22 @@
 
         <!-- Radar -->
         <activity android:name=".RadarActivity" android:exported="true" />
+        <activity
+            android:name=".deeplink.DeepLinkActivity"
+            android:exported="true"
+            android:launchMode="singleTask">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <!-- Custom-scheme deep link -->
+                <data
+                    android:scheme="smishing"
+                    android:host="news" />
+            </intent-filter>
+        </activity>
+
 
         <!-- File Provider -->
         <provider

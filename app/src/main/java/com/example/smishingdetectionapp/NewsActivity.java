@@ -89,6 +89,7 @@ public class NewsActivity extends SharedActivity implements SelectListener {
                 return true;
             }
             return false;
+
         });
 
         

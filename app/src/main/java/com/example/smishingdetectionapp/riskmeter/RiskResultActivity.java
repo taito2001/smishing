@@ -112,6 +112,41 @@ public class RiskResultActivity extends AppCompatActivity {
             startActivity(new Intent(this, MainActivity.class));
             finish();
         });
+        Button shareRiskButton = findViewById(R.id.shareRiskButton);
+        shareRiskButton.setOnClickListener(v -> {
+            // Prefer the logic’s canonical score, fall back to parsing the TextView.
+            int score = RiskScannerLogic.getCalculatedScore();
+            if (score <= 0) {
+                // Fallback: parse "71%" from percentageText
+                try {
+                    String pct = percentageText.getText().toString().replace("%", "").trim();
+                    score = Integer.parseInt(pct);
+                } catch (Exception ignored) {
+                    score = -1;
+                }
+            }
+
+            String appName = getString(R.string.app_name);
+            String msg;
+            if (score >= 0) {
+                msg = "My smishing risk score is " + score + "%. Try it yourself!";
+            } else {
+                // Extra-safe fallback if score unavailable
+                msg = "Check your smishing risk score with " + appName + "! Try it yourself!";
+            }
+
+            // include a link (Play Store style link using your package name)
+            String link = "https://play.google.com/store/apps/details?id=" + getPackageName();
+            String payload = msg + "\n" + link;
+
+            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+            shareIntent.setType("text/plain");
+            shareIntent.putExtra(Intent.EXTRA_SUBJECT, appName + " – Smishing Risk");
+            shareIntent.putExtra(Intent.EXTRA_TEXT, payload);
+
+            startActivity(Intent.createChooser(shareIntent, "Share via"));
+        });
+
     }
 
     // this is the animation for the progress bar to make the percentage and fill move
