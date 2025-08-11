@@ -28,8 +28,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.materialswitch.MaterialSwitch;
 
 import java.util.concurrent.Executor;
-<<<<<<< Updated upstream
-=======
+
 import android.widget.ScrollView;
 import android.graphics.Typeface;
 import android.view.ViewGroup;
@@ -40,7 +39,6 @@ import android.widget.Switch;
 import com.example.smishingdetectionapp.ui.ContactUsActivity;
 import com.google.android.material.button.MaterialButton;
 
->>>>>>> Stashed changes
 
 
 public class SettingsActivity extends AppCompatActivity {
