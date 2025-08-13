@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Reply Preference Entries -->
-    <string-array name="reply_entries">
-        <item>Reply</item>
-        <item>Reply to All</item>
+    <!-- Example string arrays - replace with your actual arrays as needed -->
+
+    <string-array name="example_items">
+        <item>Item 1</item>
+        <item>Item 2</item>
+        <item>Item 3</item>
     </string-array>
 
-    <!-- Reply Preference Values -->
-    <string-array name="reply_values">
-        <item>reply</item>
-        <item>reply_all</item>
-    </string-array>
+    <!-- Keep this file valid to avoid SAX parse errors -->
 </resources>
