@@ -112,6 +112,7 @@ public class NewsActivity extends SharedActivity implements SelectListener {
                 Toast.makeText(this, "You Have Lost Network Connection", Toast.LENGTH_SHORT).show();
             }
         });
+        handleDeepLinkIfAny();
     }
 
      /** Connectivity helper */
@@ -215,6 +216,22 @@ public class NewsActivity extends SharedActivity implements SelectListener {
 
         notificationManager.notify(1, notification);
     }
+    private void handleDeepLinkIfAny() {
+        Intent intent = getIntent();
+        if (intent == null) return;
+
+        String openUrl = intent.getStringExtra("open_url");
+        if (openUrl != null && !openUrl.isEmpty()) {
+            try {
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(openUrl)));
+            } catch (Exception ignored) { }
+            // prevent reopening if the activity is recreated
+            intent.removeExtra("open_url");
+            setIntent(intent);
+        }
+    }
+
+
 
 
 }
