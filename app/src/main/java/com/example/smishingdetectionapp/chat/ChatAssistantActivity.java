@@ -1,13 +1,16 @@
 package com.example.smishingdetectionapp.chat;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,10 +19,21 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.smishingdetectionapp.R;
 import com.example.smishingdetectionapp.detections.DatabaseAccess;
+import com.example.smishingdetectionapp.chat.db.ChatDatabase;
+import com.example.smishingdetectionapp.chat.db.ChatMessageEntity;
 
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * ChatAssistantActivity
+ * Init order:
+ * 1) findViewById
+ * 2) setup RecyclerView
+ * 3) seed welcome
+ * 4) init OllamaClient
+ * 5) wire listeners
+ */
 public class ChatAssistantActivity extends AppCompatActivity {
 
     private EditText userInput;
@@ -32,21 +46,36 @@ public class ChatAssistantActivity extends AppCompatActivity {
     private int supportPromptCount = 0;
     private static final int MAX_SUPPORT_PROMPTS = 4;
 
-    private Map<String, String> supportPrompts;
+    // Quick-support / FAQ layer — matched before calling LLM
+    private final Map<String, String> supportPrompts = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_assistant);
 
-        // ---- UI Elements ----
+        // 1) findViewById
         userInput = findViewById(R.id.messageInput);
         sendButton = findViewById(R.id.sendButton);
         chatRecyclerView = findViewById(R.id.chatRecyclerView);
         progressBar = findViewById(R.id.progressBar);
 
-        // Back button in header (if present)
         ImageButton backButton = findViewById(R.id.btnBack);
+        TextView historyButton = findViewById(R.id.historyButton);
+
+        // 2) setup RecyclerView
+        chatAdapter = new ChatAdapter(this);
+        chatRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        chatRecyclerView.setAdapter(chatAdapter);
+
+        // 3) seed welcome
+        seedWelcomeIfEmpty();
+
+        // 4) init OllamaClient
+        DatabaseAccess databaseAccess = DatabaseAccess.getInstance(getApplicationContext());
+        ollamaClient = new OllamaClient(databaseAccess);
+
+        // 5) wire listeners
         if (backButton != null) {
             backButton.setOnClickListener(v -> {
                 hideKeyboard();
@@ -54,36 +83,60 @@ public class ChatAssistantActivity extends AppCompatActivity {
             });
         }
 
-        // ---- RecyclerView ----
-        chatAdapter = new ChatAdapter(this);
-        chatRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        chatRecyclerView.setAdapter(chatAdapter);
+        if (historyButton != null) {
+            historyButton.setOnClickListener(v ->
+                    startActivity(new Intent(ChatAssistantActivity.this, ChatHistoryActivity.class))
+            );
+        }
 
-        // Friendly welcome on empty chat
-        seedWelcomeIfEmpty();
+        sendButton.setOnClickListener(v -> sendMessage());
 
-        // ---- Local LLM client ----
-        DatabaseAccess databaseAccess = DatabaseAccess.getInstance(getApplicationContext());
-        ollamaClient = new OllamaClient(databaseAccess);
-
-        // ---- Predefined quick-support prompts ----
-        supportPrompts = new HashMap<>();
+        // ---- FAQ / quick-support prompts (centralized) ----
+        // Existing quick replies
         supportPrompts.put("i need help", "Sure, I’m here to help. What exactly do you need help with?");
         supportPrompts.put("smishing", "Smishing is SMS-based phishing. You can report such messages via the Community Report section.");
         supportPrompts.put("is this a scam", "Let me check that for you in the system...");
         supportPrompts.put("report", "You can report suspicious SMS under the 'Community Report' tab.");
 
-        // ---- Send button ----
-        sendButton.setOnClickListener(v -> sendMessage());
+        // NEW: reviewer-requested fallback FAQ intents
+        supportPrompts.put("what is this app",
+                "This is a Smishing Detection app. It helps you identify SMS phishing, view detections, and report suspicious texts.");
+        supportPrompts.put("how do i report",
+                "Open Settings → Community and Reporting → Report. Fill in the suspicious SMS details and submit.");
+        supportPrompts.put("how to use the app",
+                "Grant SMS permission, review detections on the home screen, and report suspicious messages via the Report section.");
+        supportPrompts.put("what is smishing",
+                "Smishing is phishing by SMS—attackers try to trick you into clicking malicious links or sharing personal info.");
+        supportPrompts.put("is my data safe",
+                "Yes. Your data stays on your device. We only analyze SMS locally and do not share messages with third parties.");
+        supportPrompts.put("can i use without internet",
+                "Yes. Basic detection works offline, but reporting suspicious SMS requires an internet connection.");
+        supportPrompts.put("how do i update the app",
+                "Go to the Google Play Store, search for Smishing Detection App, and tap 'Update' if a new version is available.");
+        supportPrompts.put("who developed this app",
+                "This app was developed by students at Deakin University as part of a cybersecurity capstone project.");
+        supportPrompts.put("help",
+                "You can type your question here, check the FAQ, or report issues through the Community Report section.");
+        supportPrompts.put("can i delete my history",
+                "Yes. Go to 'View Chat History' and tap 'Clear chat history' to remove all saved messages.");
+        supportPrompts.put("does this app block sms",
+                "No, the app does not block SMS. It only detects and flags suspicious messages for your review.");
+        supportPrompts.put("what if detection is wrong",
+                "You can mark it manually in the app and report the message to improve future accuracy.");
+        supportPrompts.put("can i use this on ios",
+                "Currently the app is only available for Android. iOS support is planned for the future.");
+        supportPrompts.put("do i need to allow sms permission",
+                "Yes. SMS permission is required so the app can scan and detect suspicious messages on your device.");
+        supportPrompts.put("how to contact support",
+                "You can use this chat assistant for quick help or raise an issue through the 'Community Report' section.");
     }
 
     /** Adds a friendly greeting if the chat is empty. */
     private void seedWelcomeIfEmpty() {
         if (chatAdapter.getItemCount() == 0) {
-            chatAdapter.addMessage(new ChatMessage(getString(R.string.chat_welcome_1), ChatMessage.BOT));
-            chatAdapter.addMessage(new ChatMessage(getString(R.string.chat_welcome_2), ChatMessage.BOT));
-            chatAdapter.addMessage(new ChatMessage(getString(R.string.chat_welcome_3), ChatMessage.BOT));
-            chatRecyclerView.scrollToPosition(chatAdapter.getItemCount() - 1);
+            respondToUser(getString(R.string.chat_welcome_1));
+            respondToUser(getString(R.string.chat_welcome_2));
+            respondToUser(getString(R.string.chat_welcome_3));
         }
     }
 
@@ -94,14 +147,19 @@ public class ChatAssistantActivity extends AppCompatActivity {
 
         hideKeyboard();
 
+        // Add user message
         chatAdapter.addMessage(new ChatMessage(message, ChatMessage.USER));
+        saveMessageToDb("user", message);
+        chatRecyclerView.smoothScrollToPosition(chatAdapter.getItemCount() - 1);
+
+        // UI: busy
         userInput.setText("");
         progressBar.setVisibility(View.VISIBLE);
         sendButton.setEnabled(false);
 
         String lowerMsg = message.toLowerCase();
 
-        // Step 1: Quick-support responses
+        // Step 1: FAQ / quick-support match
         for (String key : supportPrompts.keySet()) {
             if (lowerMsg.contains(key)) {
                 String botReply = supportPrompts.get(key);
@@ -110,33 +168,38 @@ public class ChatAssistantActivity extends AppCompatActivity {
                 runOnUiThread(() -> {
                     respondToUser(botReply);
 
-                    if (key.equals("is this a scam")) {
-                        // A tiny follow-up after a brief delay
-                        new Handler(Looper.getMainLooper()).postDelayed(
-                                () -> respondToUser("Yes, this appears to be a scam. Please avoid engaging with it."),
-                                2000
-                        );
+                    // Special follow-up example
+                    if ("is this a scam".equals(key)) {
+                        new Handler(Looper.getMainLooper())
+                                .postDelayed(() ->
+                                                respondToUser("Yes, this appears to be a scam. Please avoid engaging with it."),
+                                        2000);
                     }
 
+                    // After a few quick replies, escalate to LLM once
                     if (supportPromptCount >= MAX_SUPPORT_PROMPTS) {
                         new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                            respondToUser("Transferring you to Smishing Assistant for advanced help...");
-                            Log.d("ChatFlow", "Support limit reached. Forwarding to Ollama with message: " + message);
-                            Toast.makeText(ChatAssistantActivity.this, "Sending to Ollama (LLM)...", Toast.LENGTH_SHORT).show();
+                            respondToUser("Transferring you to the assistant for more detailed help…");
+                            Log.d("ChatFlow", "Escalating to Ollama after quick-support threshold. Prompt: " + message);
+                            Toast.makeText(ChatAssistantActivity.this, "Sending to assistant…", Toast.LENGTH_SHORT).show();
 
-                            // Trigger Ollama (LLM)
-                            ollamaClient.getResponse(message, response ->
-                                    runOnUiThread(() -> respondToUser(response))
-                            );
-                        }, 2000);
+                            callLlm(message);
+                        }, 1200);
+                    } else {
+                        // Not escalating yet — end here
+                        resetUiIdle();
                     }
                 });
 
-                return; // handled via quick-support
+                return; // handled
             }
         }
 
-        // Step 2: Normal LLM call
+        // Step 2: no FAQ match → call LLM
+        callLlm(message);
+    }
+
+    private void callLlm(String message) {
         ollamaClient.getResponse(message, response ->
                 runOnUiThread(() -> respondToUser(response))
         );
@@ -146,19 +209,37 @@ public class ChatAssistantActivity extends AppCompatActivity {
     private void respondToUser(String response) {
         progressBar.setVisibility(View.GONE);
         sendButton.setEnabled(true);
+
         chatAdapter.addMessage(new ChatMessage(response, ChatMessage.BOT));
+        saveMessageToDb("bot", response);
         chatRecyclerView.smoothScrollToPosition(chatAdapter.getItemCount() - 1);
+    }
+
+    /** Return UI to idle state (used after quick reply with no escalation). */
+    private void resetUiIdle() {
+        progressBar.setVisibility(View.GONE);
+        sendButton.setEnabled(true);
+    }
+
+    /** Saves a message into Room DB. */
+    private void saveMessageToDb(String sender, String text) {
+        new Thread(() -> {
+            try {
+                ChatDatabase db = ChatDatabase.getInstance(getApplicationContext());
+                db.chatMessageDao().insert(new ChatMessageEntity(sender, text, System.currentTimeMillis()));
+            } catch (Exception e) {
+                Log.w("ChatDB", "Failed to save message", e);
+            }
+        }).start();
     }
 
     /** Hides the soft keyboard safely. */
     private void hideKeyboard() {
         try {
-            android.view.inputmethod.InputMethodManager imm =
-                    (android.view.inputmethod.InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+            InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
             if (imm != null && getCurrentFocus() != null) {
                 imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
             }
-        } catch (Exception ignored) {
-        }
+        } catch (Exception ignored) { }
     }
 }

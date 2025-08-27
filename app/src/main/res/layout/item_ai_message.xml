@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
@@ -28,10 +29,10 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="Hello! I’m here to help."
-        android:textColor="#000000"
+        android:textColor="@color/smish_text_primary"
         android:background="@drawable/bubble_bot"
         android:padding="10dp"
         android:textSize="14sp"
-        android:lineSpacingExtra="4dp" />
+        android:lineSpacingExtra="4dp"
+        tools:text="Hello! I’m here to help." />
 </LinearLayout>

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingTop="4dp"
@@ -7,6 +8,7 @@
     android:paddingStart="12dp"
     android:paddingEnd="12dp">
 
+    <!-- User Message Bubble -->
     <TextView
         android:id="@+id/messageText"
         android:layout_width="wrap_content"
@@ -14,7 +16,8 @@
         android:maxWidth="280dp"
         android:padding="12dp"
         android:textSize="16sp"
-        android:textColor="#000000"
-        android:background="@drawable/user_message_background"
-        android:layout_gravity="end" />
+        android:textColor="@color/smish_white"
+        android:background="@drawable/bubble_user"
+        android:layout_gravity="end"
+        tools:text="User message goes here" />
 </FrameLayout>

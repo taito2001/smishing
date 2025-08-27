@@ -38,7 +38,7 @@
  <color name="smish_blue_light">#3C6EC3</color>
  <color name="smish_surface">#F2F4F7</color>
  <color name="smish_white">#FFFFFFFF</color>
-
+ <color name="smish_text_hint">#7A8896</color>
  <!-- Chat Support UI -->
  <color name="smish_stroke">#DDDDDD</color>
  <color name="smish_text_on_primary">#FFFFFFFF</color>
