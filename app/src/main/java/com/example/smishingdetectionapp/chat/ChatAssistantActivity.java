@@ -129,6 +129,33 @@ public class ChatAssistantActivity extends AppCompatActivity {
                 "Yes. SMS permission is required so the app can scan and detect suspicious messages on your device.");
         supportPrompts.put("how to contact support",
                 "You can use this chat assistant for quick help or raise an issue through the 'Community Report' section.");
+        // --- Greetings ---
+        supportPrompts.put("hi",
+                "Hi! I’m your Smishing Smart Assistant. How can I help you today?");
+        supportPrompts.put("hello",
+                "Hello! I’m here to assist you with smishing detection and reporting.");
+        supportPrompts.put("hey",
+                "Hey there! Need help checking a suspicious SMS?");
+        supportPrompts.put("good morning",
+                "Good morning! How can I support you today?");
+        supportPrompts.put("good afternoon",
+                "Good afternoon! Do you want to learn more about smishing or check a message?");
+        supportPrompts.put("good evening",
+                "Good evening! I can help you understand smishing or report an SMS.");
+        // --- Politeness & Thanks ---
+        supportPrompts.put("thanks", "You’re welcome! Stay safe from smishing.");
+        supportPrompts.put("thank you", "Happy to help! Let me know if you have more questions.");
+        supportPrompts.put("ok", "Alright! Let me know if you’d like to learn more about smishing.");
+        supportPrompts.put("cool", "Glad you think so! You can ask me about smishing anytime.");
+// --- Clarifications / Confusions ---
+        supportPrompts.put("who are you", "I’m the Smishing Smart Assistant. I help explain smishing, check suspicious texts, and guide you to report them.");
+        supportPrompts.put("what can you do", "I can explain smishing, guide you on using the app, and help you report suspicious SMS.");
+        supportPrompts.put("help me", "Sure! You can ask me things like ‘What is smishing?’ or ‘How do I report a message?’");
+        // --- Fallback / Fun Responses ---
+        supportPrompts.put("bye", "Goodbye! Stay safe and remember to check suspicious messages.");
+        supportPrompts.put("see you", "See you later! Don’t forget to stay cautious with SMS links.");
+        supportPrompts.put("are you real", "I’m a virtual assistant built to help you with smishing—not human, but always available!");
+        supportPrompts.put("how are you", "I’m always doing great, ready to help you with smishing. How are you?");
     }
 
     /** Adds a friendly greeting if the chat is empty. */

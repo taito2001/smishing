@@ -15,8 +15,25 @@ public class ChatMessage {
     // Type of message (USER or BOT)
     private int messageType;
 
+    // Timestamp of the message (in millis)
+    private long timestamp;
+
     /**
-     * Constructs a ChatMessage with specified content and sender type.
+     * Constructs a ChatMessage with specified content, sender type, and timestamp.
+     *
+     * @param message The message content.
+     * @param messageType The sender type (USER or BOT).
+     * @param timestamp The time the message was created (System.currentTimeMillis()).
+     */
+    public ChatMessage(String message, int messageType, long timestamp) {
+        this.message = message;
+        this.messageType = messageType;
+        this.timestamp = timestamp;
+    }
+
+    /**
+     * Convenience constructor:
+     * Constructs a ChatMessage with current system time as timestamp.
      *
      * @param message The message content.
      * @param messageType The sender type (USER or BOT).
@@ -24,6 +41,7 @@ public class ChatMessage {
     public ChatMessage(String message, int messageType) {
         this.message = message;
         this.messageType = messageType;
+        this.timestamp = System.currentTimeMillis(); // auto timestamp
     }
 
     /**
@@ -42,5 +60,14 @@ public class ChatMessage {
      */
     public int getMessageType() {
         return messageType;
+    }
+
+    /**
+     * Gets the timestamp of the message.
+     *
+     * @return The time in milliseconds when the message was created.
+     */
+    public long getTimestamp() {
+        return timestamp;
     }
 }

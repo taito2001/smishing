@@ -2,11 +2,13 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
 
-    <!-- Match bot icon green -->
-    <solid android:color="#00BFA5"/>
+    <!-- Use app theme primary color -->
+    <solid android:color="@color/smish_blue_primary"/>
 
+    <!-- Rounded corners -->
     <corners android:radius="18dp"/>
 
+    <!-- Consistent padding -->
     <padding
         android:left="14dp"
         android:top="12dp"

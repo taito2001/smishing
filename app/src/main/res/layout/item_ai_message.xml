@@ -23,16 +23,34 @@
         android:layout_marginEnd="8dp"
         app:tint="@color/smish_bot_icon" />
 
-    <!-- Bot Message Bubble -->
-    <TextView
-        android:id="@+id/botMessageText"
-        android:layout_width="0dp"
+    <!-- Message + Timestamp container -->
+    <LinearLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:textColor="@color/smish_text_primary"
-        android:background="@drawable/bubble_bot"
-        android:padding="10dp"
-        android:textSize="14sp"
-        android:lineSpacingExtra="4dp"
-        tools:text="Hello! I’m here to help." />
+        android:orientation="vertical">
+
+        <!-- Bot Message Bubble -->
+        <TextView
+            android:id="@+id/botMessageText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxWidth="280dp"
+            android:padding="12dp"
+            android:textSize="15sp"
+            android:textColor="@color/smish_text_primary"
+            android:background="@drawable/bubble_bot"
+            android:lineSpacingExtra="2dp"
+            tools:text="Hello! I’m here to help you with smishing messages." />
+
+        <!-- Timestamp -->
+        <TextView
+            android:id="@+id/botTimeText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:layout_gravity="start"
+            android:textSize="10sp"
+            android:textColor="@color/smish_text_secondary"
+            tools:text="14:32" />
+    </LinearLayout>
 </LinearLayout>
