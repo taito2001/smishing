@@ -141,6 +141,9 @@
         <activity android:name=".RadarActivity" android:exported="true" />
 
         <!-- File Provider (for Export Chat History) -->
+
+
+        <!-- File Provider -->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"
