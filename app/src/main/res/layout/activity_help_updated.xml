@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
@@ -8,7 +7,7 @@
     android:layout_height="match_parent"
     tools:context=".HelpActivity">
 
-    <!-- Title Row -->
+    <!-- Top Row -->
     <LinearLayout
         android:id="@+id/help_title"
         android:layout_width="match_parent"
@@ -17,16 +16,14 @@
         android:paddingVertical="16dp"
         android:paddingHorizontal="16dp"
         android:gravity="center_vertical"
-        tools:ignore="MissingConstraints">
+        app:layout_constraintTop_toTopOf="parent">
 
         <!-- Back Button -->
         <ImageButton
             android:id="@+id/help_back"
-            android:layout_width="@dimen/button_tertiary_height"
-            android:layout_height="@dimen/button_tertiary_height"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
             android:background="@null"
-            android:scaleType="fitXY"
-            android:adjustViewBounds="true"
             android:contentDescription="Back"
             app:srcCompat="@drawable/back_button" />
 
@@ -37,11 +34,13 @@
 
         <!-- Title -->
         <TextView
+            android:id="@+id/help_page_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/help_page"
-            android:textSize="@dimen/text_size_headline"
+            android:textSize="24sp"
             android:textStyle="bold"
+            android:textColor="@color/navy_blue"
             android:gravity="center" />
 
         <Space
@@ -52,15 +51,12 @@
         <!-- Menu Button -->
         <ImageButton
             android:id="@+id/help_menu"
-            android:layout_width="@dimen/button_tertiary_height"
-            android:layout_height="@dimen/button_tertiary_height"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
             android:background="@null"
             android:contentDescription="Menu"
-            android:scaleType="fitXY"
-            android:adjustViewBounds="true"
             app:srcCompat="@drawable/menu_icon" />
     </LinearLayout>
-
 
     <!-- Scrollable Content -->
     <ScrollView
@@ -68,7 +64,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintTop_toBottomOf="@id/help_title"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/bottom_navigation"
         android:padding="16dp">
 
         <LinearLayout
@@ -80,149 +76,197 @@
             <!-- Logo -->
             <ImageView
                 android:id="@+id/ivHelpIcon"
-                android:layout_width="@dimen/image_size_medium"
-                android:layout_height="@dimen/image_size_medium"
+                android:layout_width="112dp"
+                android:layout_height="106dp"
                 android:layout_gravity="center"
                 android:layout_marginTop="16dp"
-                app:srcCompat="@drawable/new_logo" />
+                app:srcCompat="@drawable/new_logo"
+                android:contentDescription="@string/hardhat_logo_alt" />
 
             <!-- Subtitle -->
             <TextView
                 android:id="@+id/help_subtitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="12dp"
                 android:gravity="center"
                 android:text="How can we help you? Browse common topics below or get in touch with us."
-                android:textSize="@dimen/text_size_xlarge" />
+                android:textSize="16sp"
+                android:textColor="@color/black" />
 
             <!-- Common Topics -->
             <TextView
                 android:id="@+id/help_common_topics_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin_xlarge"
-                android:layout_marginLeft="@dimen/margin_small"
+                android:layout_marginTop="24dp"
                 android:text="Common Topics"
                 android:textStyle="bold"
-                android:textSize="@dimen/text_size_xlarge" />
+                android:textSize="18sp" />
 
-            <!-- Example Cards -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardTopic1"
+                style="@style/Widget.MaterialComponents.CardView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:layout_marginTop="8dp"
                 android:clickable="true"
-                android:focusable="true"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="4dp">
+                android:focusable="true">
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/activity_vertical_margin"
+                    android:padding="16dp"
                     android:text="How to detect a smishing message"
-                    android:textSize="@dimen/text_size_medium" />
+                    android:textSize="16sp" />
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- FAQ Heading -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardTopic2"
+                style="@style/Widget.MaterialComponents.CardView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:clickable="true"
+                android:focusable="true">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp"
+                    android:text="How to report a suspicious SMS"
+                    android:textSize="16sp" />
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardTopic3"
+                style="@style/Widget.MaterialComponents.CardView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:clickable="true"
+                android:focusable="true">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp"
+                    android:text="What is smishing vs. phishing?"
+                    android:textSize="16sp" />
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- FAQ -->
             <TextView
                 android:id="@+id/help_faq_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin_xlarge"
-                android:layout_marginLeft="@dimen/margin_small"
+                android:layout_marginTop="24dp"
                 android:text="FAQ"
                 android:textStyle="bold"
                 android:textSize="18sp" />
 
-            <!-- FAQ Card that opens FAQ Activity -->
             <com.google.android.material.card.MaterialCardView
-                android:id="@+id/cardFAQ1"
+                android:id="@+id/cardFAQ"
+                style="@style/Widget.MaterialComponents.CardView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:layout_marginTop="8dp"
                 android:clickable="true"
-                android:focusable="true"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="2dp">
+                android:focusable="true">
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/activity_vertical_margin"
-                    android:textSize="@dimen/text_size_medium"
-                    android:text="View Frequently Asked Questions" />
+                    android:padding="16dp"
+                    android:text="Click here to redirect"
+                    android:textSize="16sp" />
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Contact Options (Call & Mail) -->
+            <!-- Still need help -->
+            <TextView
+                android:id="@+id/help_still_need_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="Still need help?"
+                android:textStyle="bold"
+                android:textSize="18sp" />
+
+            <!-- Contact -->
             <LinearLayout
-                android:id="@+id/llHelpContactOptions"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/activity_vertical_margin"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:layout_marginTop="8dp"
+                android:weightSum="2">
 
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/cardCallUs"
+                    style="@style/Widget.MaterialComponents.CardView"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:clickable="true"
-                    android:focusable="true"
-                    app:cardCornerRadius="8dp"
-                    app:cardElevation="4dp">
+                    android:focusable="true">
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_margin="@dimen/activity_vertical_margin"
-                        android:textSize="@dimen/text_size_medium"
-                        android:text="Call Us" />
+                        android:padding="16dp"
+                        android:text="Call Us"
+                        android:textSize="16sp" />
                 </com.google.android.material.card.MaterialCardView>
 
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/cardMailUs"
+                    style="@style/Widget.MaterialComponents.CardView"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:layout_marginStart="8dp"
                     android:clickable="true"
-                    android:focusable="true"
-                    app:cardCornerRadius="8dp"
-                    app:cardElevation="2dp">
+                    android:focusable="true">
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_margin="@dimen/activity_vertical_margin"
-                        android:textSize="@dimen/text_size_medium"
-                        android:text="Mail Us" />
+                        android:padding="16dp"
+                        android:text="Mail Us"
+                        android:textSize="16sp" />
                 </com.google.android.material.card.MaterialCardView>
             </LinearLayout>
 
-            <!-- Feedback -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardFeedback"
+                style="@style/Widget.MaterialComponents.CardView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:layout_marginTop="8dp"
                 android:clickable="true"
-                android:focusable="true"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="2dp">
+                android:focusable="true">
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/activity_vertical_margin"
-                    android:textSize="@dimen/text_size_medium"
-                    android:text="Send Feedback" />
+                    android:padding="16dp"
+                    android:text="Send Feedback"
+                    android:textSize="16sp" />
             </com.google.android.material.card.MaterialCardView>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="32dp" />
         </LinearLayout>
     </ScrollView>
+
+    <!-- Bottom Navigation -->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="@color/baby_blue"
+        app:menu="@menu/activity_main_drawer"
+        app:itemIconTint="@color/black"
+        app:itemTextColor="@color/black"
+        app:itemIconSize="25dp"
+        app:itemHorizontalTranslationEnabled="false"
+        app:labelVisibilityMode="labeled"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
