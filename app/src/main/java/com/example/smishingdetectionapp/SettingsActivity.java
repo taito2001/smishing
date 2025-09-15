@@ -215,7 +215,6 @@ public class SettingsActivity extends AppCompatActivity {
         // Help button to switch to Help page
         Button helpBtn = findViewById(R.id.helpBtn);
         helpBtn.setOnClickListener(v -> {
-            Toast.makeText(this, "Help clicked!", Toast.LENGTH_SHORT).show();
             startActivity(new Intent(this, HelpActivity.class));
         });
 
