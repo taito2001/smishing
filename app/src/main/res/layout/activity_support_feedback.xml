@@ -89,7 +89,6 @@
                 app:buttonTint="@color/redd" />
         </RadioGroup>
         <!-- Q2: rating -->
-        <!-- Q2: rating -->
         <TextView
             android:id="@+id/tvRateService"
             android:layout_width="wrap_content"
