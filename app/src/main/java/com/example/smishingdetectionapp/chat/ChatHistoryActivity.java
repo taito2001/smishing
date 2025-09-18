@@ -29,7 +29,8 @@ import java.util.Locale;
 
 public class ChatHistoryActivity extends AppCompatActivity {
 
-    private List<ChatMessageEntity> allMessages; // keep messages for export
+    // Keep messages for export
+    private List<ChatMessageEntity> allMessages;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +43,8 @@ public class ChatHistoryActivity extends AppCompatActivity {
         // Menu button (3 dots)
         ImageButton menuButton = findViewById(R.id.menuButton);
         menuButton.setOnClickListener(v -> {
-            androidx.appcompat.widget.PopupMenu popup = new androidx.appcompat.widget.PopupMenu(this, v);
+            androidx.appcompat.widget.PopupMenu popup =
+                    new androidx.appcompat.widget.PopupMenu(this, v);
             popup.getMenuInflater().inflate(R.menu.menu_chat_history, popup.getMenu());
             popup.setOnMenuItemClickListener(item -> {
                 int id = item.getItemId();
@@ -81,7 +83,7 @@ public class ChatHistoryActivity extends AppCompatActivity {
                         chatAdapter.addMessage(new ChatMessage(
                                 e.text,
                                 e.sender.equalsIgnoreCase("user") ? ChatMessage.USER : ChatMessage.BOT,
-                                e.timestamp   // pass timestamp
+                                e.timestamp
                         ));
                     }
                     historyRecyclerView.scrollToPosition(chatAdapter.getItemCount() - 1);
@@ -133,9 +135,9 @@ public class ChatHistoryActivity extends AppCompatActivity {
             if (!exportDir.exists()) exportDir.mkdirs();
 
             File exportFile = new File(exportDir, "chat_history.txt");
-            FileOutputStream fos = new FileOutputStream(exportFile);
-            fos.write(sb.toString().getBytes());
-            fos.close();
+            try (FileOutputStream fos = new FileOutputStream(exportFile)) {
+                fos.write(sb.toString().getBytes());
+            }
 
             Uri fileUri = FileProvider.getUriForFile(
                     this,
@@ -149,7 +151,6 @@ public class ChatHistoryActivity extends AppCompatActivity {
             shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
             startActivity(Intent.createChooser(shareIntent, "Share chat history TXT"));
-
             Toast.makeText(this, "Chat history exported as TXT.", Toast.LENGTH_SHORT).show();
 
         } catch (IOException e) {
@@ -187,28 +188,27 @@ public class ChatHistoryActivity extends AppCompatActivity {
 
         // User message paint
         Paint userPaint = new Paint(paint);
-        userPaint.setColor(getResources().getColor(R.color.smish_blue_dark, getTheme())); // centralized
+        userPaint.setColor(getResources().getColor(R.color.smish_blue_dark, getTheme()));
 
         // Bot message paint
         Paint botPaint = new Paint(paint);
-        botPaint.setColor(getResources().getColor(R.color.smish_bot_icon, getTheme())); // centralized
+        botPaint.setColor(getResources().getColor(R.color.smish_bot_icon, getTheme()));
 
-        PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(595, 842, 1).create();
+        PdfDocument.PageInfo pageInfo =
+                new PdfDocument.PageInfo.Builder(595, 842, 1).create();
         PdfDocument.Page page = pdfDocument.startPage(pageInfo);
         Canvas canvas = page.getCanvas();
 
         int x = 40, y = 90; // header space
 
-        // ---- Heading ----
+        // Heading
         canvas.drawText("Smishing Smart Assistant – Chat History",
-                pageInfo.getPageWidth() / 2,
-                40,
-                headingPaint);
+                pageInfo.getPageWidth() / 2f, 40, headingPaint);
 
         String dateText = "Exported on: " + sdf.format(new Date()) + " AEST";
-        canvas.drawText(dateText, pageInfo.getPageWidth() / 2, 60, subHeadingPaint);
+        canvas.drawText(dateText, pageInfo.getPageWidth() / 2f, 60, subHeadingPaint);
 
-        // ---- Chat Messages ----
+        // Chat Messages
         for (ChatMessageEntity e : allMessages) {
             String time = e.timestamp > 0 ? sdf.format(new Date(e.timestamp)) + " AEST" : "";
             String prefix = e.sender.equalsIgnoreCase("user") ? "User: " : "Bot: ";
@@ -216,9 +216,8 @@ public class ChatHistoryActivity extends AppCompatActivity {
 
             Paint currentPaint = e.sender.equalsIgnoreCase("user") ? userPaint : botPaint;
 
-            // Wrap text if too long
-            int maxWidth = pageInfo.getPageWidth() - 80;
-            for (String textLine : line.split("(?<=\\G.{60})")) { // wrap every ~60 chars
+            // Naive wrap every ~60 chars
+            for (String textLine : line.split("(?<=\\G.{60})")) {
                 canvas.drawText(textLine, x, y, currentPaint);
                 y += 18;
             }
@@ -235,10 +234,9 @@ public class ChatHistoryActivity extends AppCompatActivity {
 
                 // redraw header
                 canvas.drawText("Smishing Smart Assistant – Chat History",
-                        pageInfo.getPageWidth() / 2,
-                        40,
-                        headingPaint);
-                canvas.drawText(dateText, pageInfo.getPageWidth() / 2, 60, subHeadingPaint);
+                        pageInfo.getPageWidth() / 2f, 40, headingPaint);
+                canvas.drawText(dateText,
+                        pageInfo.getPageWidth() / 2f, 60, subHeadingPaint);
             }
         }
 
@@ -248,8 +246,7 @@ public class ChatHistoryActivity extends AppCompatActivity {
         if (!exportDir.exists()) exportDir.mkdirs();
 
         File pdfFile = new File(exportDir, "chat_history.pdf");
-        try {
-            FileOutputStream fos = new FileOutputStream(pdfFile);
+        try (FileOutputStream fos = new FileOutputStream(pdfFile)) {
             pdfDocument.writeTo(fos);
             pdfDocument.close();
 
@@ -265,7 +262,6 @@ public class ChatHistoryActivity extends AppCompatActivity {
             shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
             startActivity(Intent.createChooser(shareIntent, "Share chat history PDF"));
-
             Toast.makeText(this, "Chat history exported as PDF.", Toast.LENGTH_SHORT).show();
         } catch (IOException e) {
             e.printStackTrace();

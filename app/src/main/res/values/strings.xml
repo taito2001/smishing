@@ -60,6 +60,58 @@
     <string name="export_chat_history_txt">Export chat history (TXT)</string>
     <string name="export_chat_history_pdf">Export chat history (PDF)</string>
     <string name="smishing_assistant">Smishing Assistant</string>
+    <string name="support_feedback_title">Support Feedback</string>
+    <!-- ================= Feedback Strings ================= -->
+    <string name="feedback_header">Smishing Assistant</string>
+    <string name="select_rating">Select rating</string>
+
+    <!-- Question 1 -->
+    <string name="feedback_q1">Has your issue been solved?</string>
+    <string name="feedback_yes">Yes 🙂</string>
+    <string name="feedback_no">No 🙁</string>
+    <string name="feedback_select_yes_no">Please select Yes or No.</string>
+    <!-- Question 2 -->
+    <string name="feedback_q2">How would you rate our support service?</string>
+    <!-- ================= Additional Feedback Strings ================= -->
+    <string name="feedback_apology">We apologize for any inconvenience. We will work harder to improve our services!</string>
+    <string name="no_specific_issue">No specific issue selected</string>
+    <!-- Problems list -->
+    <string name="experience_problems">Did you experience any of the following problems?</string>
+    <string name="problem_solution_not_helpful">Solution not helpful</string>
+    <string name="problem_robotic_replies">Robotic replies</string>
+    <string name="problem_slow_response">Slow response</string>
+    <string name="problem_wrong_words">Wrong words used</string>
+    <string name="problem_repetitive">Getting repetitive questions</string>
+    <string name="problem_unfriendly">Unfriendly attitude</string>
+
+    <!-- Free text -->
+    <string name="feedback_hint">Please tell us more...</string>
+    <string name="feedback_more">Please provide more details</string>
+    <string name="feedback_counter">0/280</string>
+
+    <!-- Buttons & messages -->
+    <string name="feedback_submit">Submit</string>
+    <string name="thank_you_message">Thank you for your valuable feedback!</string>
+    <string name="close">Close</string>
+    <string name="feedback_submitted">Your feedback has been submitted.</string>
+    <string name="smishing_ai_assistant">Smishing AI Assistant</string>
+    <string name="support_feedback_details_title">Feedback Details</string>
+
+    <!-- Success dialog -->
+    <string name="chat_rated_success">Chat rated successfully</string>
+    <string name="feedback_positive_msg">Thank you for your feedback! Your support motivates us to keep improving.</string>
+    <string name="feedback_neutral_msg">Thanks for sharing your feedback. We’ll continue working to provide a better experience.</string>
+    <string name="feedback_negative_msg">We apologize for any inconvenience. We will work harder to improve our services!</string>
+    <!-- Accessibility content descriptions -->
+    <string name="cd_success">Feedback submitted successfully</string>
+
+    <!-- Thank you / confirmation -->
+    <string name="feedback_thank_you">Thank you for your feedback! Your support is what motivates us to keep improving.</string>
+    <string name="feedback_summary_default">Excellent</string>
+    <string name="rating_poor">Poor 😞</string>
+    <string name="rating_fair">Fair 😐</string>
+    <string name="rating_average">Average 🙂</string>
+
     <!-- Error messages -->
     <string name="no_network_message">No available network. Please check your internet connection or try again later</string>
 
