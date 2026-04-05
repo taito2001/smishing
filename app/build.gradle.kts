@@ -1,7 +1,11 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
-    id("com.chaquo.python")
+
+    id("org.jetbrains.kotlin.plugin.compose") version libs.versions.kotlin.get()
+    //id("com.chaquo.python")
 }
 
 android {
@@ -50,8 +54,9 @@ android {
 //    }
     compileOptions {
 
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
+
 
 
     }
@@ -59,12 +64,17 @@ android {
         viewBinding = true
         compose = true
     }
-    kotlinOptions {
-        jvmTarget = "1.8"
+
+    kotlin {
+        compilerOptions {
+            jvmTarget = JvmTarget.fromTarget("21")
+
+        }
     }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
-    }
+
+    //composeOptions {
+    //    kotlinCompilerExtensionVersion = "1.5.1"
+    //}
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
@@ -77,6 +87,9 @@ android {
 }
 
 dependencies {
+
+    implementation(project(":shared"))
+
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1")
     implementation("androidx.recyclerview:recyclerview:1.3.2")
     implementation(libs.appcompat)
@@ -131,4 +144,8 @@ dependencies {
     implementation("com.getkeepsafe.taptargetview:taptargetview:1.13.3")
     implementation("androidx.room:room-runtime:2.6.1")
     annotationProcessor("androidx.room:room-compiler:2.6.1")
+
+
+
+
 }
