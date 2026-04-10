@@ -1,3 +1,4 @@
+
 package com.example.smishingdetectionapp.notifications;
 
 import static com.example.smishingdetectionapp.R.string.*;
@@ -23,7 +24,7 @@ public class NotificationType {
     {
         //sharedPreferences = context.getSharedPreferences("settings", Context.MODE_PRIVATE);
         this.context = context;
-        this.key = context.getString(keyString);;
+        this.key = context.getString(keyString);
         this.channelID = context.getString(channelIDString);
         this.channelName = context.getString(channelNameString);
         this.channelDesc = context.getString(channelDescString);
