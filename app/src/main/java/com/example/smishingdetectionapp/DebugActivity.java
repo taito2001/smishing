@@ -9,7 +9,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.smishingdetectionapp.notifications.NotificationHelper;
 import com.example.smishingdetectionapp.notifications.NotificationType;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.example.smishingdetectionapp.navigation.BottomNavCoordinator;
 
 public class DebugActivity extends AppCompatActivity {
