@@ -65,6 +65,7 @@ sqldelight {
     databases {
         create("SmishingDatabase") {
             packageName.set("com.example.smishingdetectionapp")
+            srcDirs("src/commonMain/sqldelight")
         }
     }
 }
