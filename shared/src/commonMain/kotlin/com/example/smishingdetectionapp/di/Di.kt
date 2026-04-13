@@ -2,6 +2,7 @@ package com.example.smishingdetectionapp.di
 
 import org.koin.core.module.Module
 import org.koin.dsl.module
+import com.example.smishingdetectionapp.data.repository.ChatRepository
 
 // shared, platform-agnostic bindings (repositories, services, etc.)
 val sharedModule: Module = module {
