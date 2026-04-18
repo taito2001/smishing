@@ -72,7 +72,9 @@ public class RiskResultActivity extends AppCompatActivity {
         RiskScannerLogic.scanHabits(this, progressBar, riskLevelText,
                 lightAgeGroup, lightSmsApp, lightSecurityApp, lightSpamFilter,
                 lightDeviceLock, lightUnknownSources, lightSmsBehaviour, disableSmsRisk,
-                disableAgeRisk, disableSecurityRisk);
+                disableAgeRisk, disableSecurityRisk, 23);
+
+        animateProgress(progressBar, percentageText, RiskScannerLogic.getCalculatedScore());
 
         // this is for view anlysis text to make it a clickable text view
         TextView viewAnalysisText = findViewById(R.id.textViewRiskDetails);

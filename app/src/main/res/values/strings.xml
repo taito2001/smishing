@@ -474,6 +474,13 @@
     <string name="Forums_and_Report">Forums &amp; Report</string>
     <string name="word_count_format">Words: %1$d / %2$d</string>
     <string name="feedback_success">Feedback submitted successfully!</string>
+    <string name="view_profile">View Profile</string>
+    <string name="user_profile_title">User Profile</string>
+    <string name="profile_picture_desc">Profile Picture</string>
+    <string name="address_label">Address</string>
+    <string name="edit_button">Edit</string>
+    <string name="view_risk_profile">View Risk Profile</string>
+    <string name="save_button">Save</string>
 
     <string name="invite_friend">Invite a Friend</string>
     <string name="share_to_story">Share to story</string>
