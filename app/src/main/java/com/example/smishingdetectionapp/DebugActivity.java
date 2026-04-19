@@ -15,6 +15,21 @@ import com.example.smishingdetectionapp.notifications.NotificationHelper;
 import com.example.smishingdetectionapp.notifications.NotificationType;
 import com.example.smishingdetectionapp.navigation.BottomNavCoordinator;
 
+
+//KMM module
+import com.example.smishingdetectionapp.util.StringUtils;
+import com.example.smishingdetectionapp.util.PhoneUtils;
+import com.example.smishingdetectionapp.util.ValidationUtils;
+import com.example.smishingdetectionapp.util.PlatformInfo;
+import com.example.smishingdetectionapp.util.PlatformInfo_androidKt;
+import com.example.smishingdetectionapp.util.Logger_androidKt;
+import com.example.smishingdetectionapp.util.UuidUtils_androidKt;
+import com.example.smishingdetectionapp.domain.riskscanner.AndroidRiskCheckProvider;
+import com.example.smishingdetectionapp.domain.riskscanner.RiskCheckResult;
+import com.example.smishingdetectionapp.domain.riskscanner.RiskScannerEngine;
+import com.example.smishingdetectionapp.domain.riskscanner.RiskScore;
+
+
 public class DebugActivity extends AppCompatActivity {
 
     private LinearLayout buttonContainer;
@@ -66,10 +81,10 @@ public class DebugActivity extends AppCompatActivity {
 
         addButton("Run Scan (Raw Values)", () -> {
             try {
-                com.example.smishingdetectionapp.domain.riskscanner.AndroidRiskCheckProvider provider =
-                        new com.example.smishingdetectionapp.domain.riskscanner.AndroidRiskCheckProvider(this);
-                com.example.smishingdetectionapp.domain.riskscanner.RiskScore score =
-                        com.example.smishingdetectionapp.domain.riskscanner.RiskScannerEngine.INSTANCE.scanHabits(
+                AndroidRiskCheckProvider provider =
+                        new AndroidRiskCheckProvider(this);
+                RiskScore score =
+                        RiskScannerEngine.INSTANCE.scanHabits(
                                 provider, false, false, false, 23
                         );
 
@@ -78,7 +93,7 @@ public class DebugActivity extends AppCompatActivity {
                 sb.append("Risk Level: ").append(score.getRiskLevel()).append("\n\n");
 
                 sb.append("Check Results:\n");
-                for (com.example.smishingdetectionapp.domain.riskscanner.RiskCheckResult result : score.getCheckResults()) {
+                for (RiskCheckResult result : score.getCheckResults()) {
                     sb.append(result.getPassed() ? "✅" : "❌");
                     sb.append(" ").append(result.getName());
                     sb.append(" (").append(result.getRiskPoints()).append(" pts)");
@@ -120,19 +135,227 @@ public class DebugActivity extends AppCompatActivity {
         });
 
 
-        //KMM Util Tests:
-        beginCategory("KMM Util Tests");
+        //ValidationUtils Tests:
+        beginCategory("ValidationUtils Tests");
+
+        addButton("Email Validation", () -> {
+            try {
+                android.widget.EditText input = new android.widget.EditText(this);
+                input.setHint("Enter email address");
+
+                new androidx.appcompat.app.AlertDialog.Builder(this)
+                        .setTitle("Test Email Validation")
+                        .setView(input)
+                        .setPositiveButton("Test", (dialog, which) -> {
+                            String email = input.getText().toString();
+                            String error = ValidationUtils.INSTANCE.getEmailError(email);
+                            boolean valid = ValidationUtils.INSTANCE.isValidEmail(email);
+
+                            StringBuilder sb = new StringBuilder();
+                            sb.append("Input: ").append(email).append("\n\n");
+                            sb.append("Valid: ").append(valid ? "✅ Yes" : "❌ No").append("\n");
+                            if (error != null) {
+                                sb.append("Error: ").append(error);
+                            }
+
+                            new androidx.appcompat.app.AlertDialog.Builder(this)
+                                    .setTitle("Result")
+                                    .setMessage(sb.toString())
+                                    .setPositiveButton("OK", null)
+                                    .show();
+                        })
+                        .setNegativeButton("Cancel", null)
+                        .show();
+
+            } catch (Exception e) {
+                Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
+
+        addButton("PIN Validation", () -> {
+            try {
+                android.widget.EditText input = new android.widget.EditText(this);
+                input.setHint("Enter PIN");
+                input.setInputType(android.text.InputType.TYPE_CLASS_NUMBER);
+
+                new androidx.appcompat.app.AlertDialog.Builder(this)
+                        .setTitle("Test PIN Validation")
+                        .setView(input)
+                        .setPositiveButton("Test", (dialog, which) -> {
+                            String pin = input.getText().toString();
+                            String error = ValidationUtils.INSTANCE.getPinError(pin);
+                            boolean valid = ValidationUtils.INSTANCE.isValidPin(pin);
+
+                            StringBuilder sb = new StringBuilder();
+                            sb.append("Input: ").append(pin).append("\n\n");
+                            sb.append("Valid: ").append(valid ? "✅ Yes" : "❌ No").append("\n");
+                            if (error != null) {
+                                sb.append("Error: ").append(error);
+                            }
+
+                            new androidx.appcompat.app.AlertDialog.Builder(this)
+                                    .setTitle("Result")
+                                    .setMessage(sb.toString())
+                                    .setPositiveButton("OK", null)
+                                    .show();
+                        })
+                        .setNegativeButton("Cancel", null)
+                        .show();
+
+            } catch (Exception e) {
+                Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
+
+        addButton("Password Validation", () -> {
+            try {
+                android.widget.EditText input = new android.widget.EditText(this);
+                input.setHint("Enter password");
+                input.setInputType(android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD);
+
+                new androidx.appcompat.app.AlertDialog.Builder(this)
+                        .setTitle("Test Password Validation")
+                        .setView(input)
+                        .setPositiveButton("Test", (dialog, which) -> {
+                            String password = input.getText().toString();
+                            ValidationUtils.PasswordStrength strength =
+                                    ValidationUtils.INSTANCE.getPasswordStrength(password);
+
+                            StringBuilder sb = new StringBuilder();
+                            sb.append("Strength: ").append(strength.getLabel()).append(" (").append(strength.getScore()).append("/5)\n\n");
+
+                            for (ValidationUtils.PasswordCheck check : strength.getChecks()) {
+                                sb.append(check.getPassed() ? "✅" : "❌");
+                                sb.append(" ").append(check.getDescription()).append("\n");
+                            }
+
+                            new androidx.appcompat.app.AlertDialog.Builder(this)
+                                    .setTitle("Result")
+                                    .setMessage(sb.toString())
+                                    .setPositiveButton("OK", null)
+                                    .show();
+                        })
+                        .setNegativeButton("Cancel", null)
+                        .show();
+
+            } catch (Exception e) {
+                Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
+
+
+
+        //StringUtils Tests:
+        beginCategory("StringUtil Tests");
+
+        addButton("String Analysis", () -> {
+            try {
+                android.widget.EditText input = new android.widget.EditText(this);
+                input.setHint("Enter any text");
+
+                new androidx.appcompat.app.AlertDialog.Builder(this)
+                        .setTitle("Test String Analysis")
+                        .setView(input)
+                        .setPositiveButton("Test", (dialog, which) -> {
+                            String text = input.getText().toString();
+
+                            StringBuilder sb = new StringBuilder();
+                            sb.append("Length: ").append(text.length()).append("\n\n");
+                            sb.append("Contains URL: ").append(StringUtils.INSTANCE.containsUrl(text) ? "Yes" : "No").append("\n");
+
+                            if (StringUtils.INSTANCE.containsUrl(text)) {
+                                sb.append("URLs: ").append(StringUtils.INSTANCE.extractUrls(text)).append("\n");
+                            }
+
+                            sb.append("Suspicious Keywords: ").append(StringUtils.INSTANCE.containsSuspiciousKeywords(text) ? "⚠️ Yes" : "✅ No").append("\n");
+                            sb.append("Valid Email: ").append(ValidationUtils.INSTANCE.isValidEmail(text) ? "Yes" : "No").append("\n");
+                            sb.append("Valid Phone: ").append(PhoneUtils.INSTANCE.getCountryFromNumber(text) != null ? "Yes" : "No").append("\n");
+
+                            new androidx.appcompat.app.AlertDialog.Builder(this)
+                                    .setTitle("Result")
+                                    .setMessage(sb.toString())
+                                    .setPositiveButton("OK", null)
+                                    .show();
+                        })
+                        .setNegativeButton("Cancel", null)
+                        .show();
+
+            } catch (Exception e) {
+                Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
+
+
+        //PhoneUtils Tests:
+        beginCategory("PhoneUtil Tests");
+
+        addButton("Phone Validation", () -> {
+            try {
+                android.widget.EditText input = new android.widget.EditText(this);
+                input.setHint("Enter phone number");
+                input.setInputType(android.text.InputType.TYPE_CLASS_PHONE);
+
+                new androidx.appcompat.app.AlertDialog.Builder(this)
+                        .setTitle("Test Phone Validation")
+                        .setView(input)
+                        .setPositiveButton("Test", (dialog, which) -> {
+                            String phone = input.getText().toString();
+
+                            StringBuilder sb = new StringBuilder();
+                            sb.append("Input: ").append(phone).append("\n\n");
+                            String country = PhoneUtils.INSTANCE.getCountryFromNumber(phone);
+                            sb.append("Country: ").append(country != null ? country : "Unknown").append("\n");
+                            sb.append("Normalized: ").append(PhoneUtils.INSTANCE.normalizeNumber(phone)).append("\n");
+                            sb.append("Short Code: ").append(PhoneUtils.INSTANCE.isShortCode(phone) ? "Yes" : "No").append("\n");
+                            sb.append("Suspicious Sender: ").append(PhoneUtils.INSTANCE.isSuspiciousSender(phone) ? "Yes" : "No").append("\n");
+
+                            new androidx.appcompat.app.AlertDialog.Builder(this)
+                                    .setTitle("Result")
+                                    .setMessage(sb.toString())
+                                    .setPositiveButton("OK", null)
+                                    .show();
+                        })
+                        .setNegativeButton("Cancel", null)
+                        .show();
+
+            } catch (Exception e) {
+                Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
+
+        //KMM Misc Tests:
+        beginCategory("KMM Misc Tests");
 
         addButton("Platform Info", () -> {
             try {
-                com.example.smishingdetectionapp.util.PlatformInfo info =
-                        com.example.smishingdetectionapp.util.PlatformInfo_androidKt.getPlatformInfo(this);
+                PlatformInfo info =
+                        PlatformInfo_androidKt.getPlatformInfo(this);
                 String msg = info.getPlatformName() + " " + info.getOsVersion() + "\n" +
                         info.getDeviceModel() + " v" + info.getAppVersion();
                 Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
             } catch (Exception e) {
                 Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
                 e.printStackTrace();
+            }
+        });
+
+        addButton("Logger Test", () -> {
+            try {
+                Logger_androidKt.logDebug("DebugTest", "This is a debug message");
+                Logger_androidKt.logWarning("DebugTest", "This is a warning");
+                Logger_androidKt.logError("DebugTest", "This is an error");
+                Toast.makeText(this, "Check logcat for output", Toast.LENGTH_SHORT).show();
+            } catch (Exception e) {
+                Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
+
+        addButton("UUID Generator Test", () -> {
+            try {
+                String uuid = UuidUtils_androidKt.generateUUID();
+                Toast.makeText(this, "UUID: " + uuid, Toast.LENGTH_LONG).show();
+            } catch (Exception e) {
+                Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
 
