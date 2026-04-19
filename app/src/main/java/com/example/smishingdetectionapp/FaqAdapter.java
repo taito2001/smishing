@@ -37,7 +37,13 @@ public class FaqAdapter extends RecyclerView.Adapter<FaqAdapter.FaqViewHolder> {
         holder.expandIcon.setRotation(item.isExpanded() ? 180 : 0);
 
         holder.questionLayout.setOnClickListener(v -> {
-            item.setExpanded(!item.isExpanded());
+            FaqItem oldItem = faqList.get(position);
+            FaqItem newItem = new FaqItem(
+                    oldItem.getQuestion(),
+                    oldItem.getAnswer(),
+                    !oldItem.isExpanded()
+            );
+            faqList.set(position, newItem);
             notifyItemChanged(position);
         });
     }
