@@ -1,0 +1,28 @@
+CREATE TABLE ChatMessageEntity(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    sender TEXT NOT NULL,
+    text TEXT NOT NULL,
+    timestamp INTEGER NOT NULL
+);
+
+getAllMessages:
+SELECT * FROM ChatMessageEntity ORDER BY timestamp ASC;
+
+getMessagesBySender:
+SELECT * FROM ChatMessageEntity WHERE sender = :sender ORDER BY timestamp ASC;
+
+getMessageById:
+SELECT * FROM ChatMessageEntity WHERE id = ?;
+
+insertMessage:
+INSERT INTO ChatMessageEntity(sender, text, timestamp)
+VALUES (?, ?, ?);
+
+deleteMessageById:
+DELETE FROM ChatMessageEntity WHERE id = ?;
+
+deleteAllMessages:
+DELETE FROM ChatMessageEntity;
+
+getLastInsertRowId:
+SELECT last_insert_rowid();
